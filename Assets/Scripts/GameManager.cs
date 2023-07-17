@@ -2,6 +2,9 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Manages the game. Responsible for the enemy spawning and the representation of the score in the UI.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [Header("Enemy Spawning")]
@@ -11,12 +14,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Enemy _enemyPrefab;
     private float _spawnTimer;
 
-    // Scoring:
+    [Header("Scoring")]
     [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private PlayerScore _playerScore;
 
     /// <summary>
-    /// Spawn an enemy at the center of the screen.
+    /// Spawns an enemy at the center of the screen.
     /// </summary>
     private void SpawnEnemy()
     {
@@ -25,7 +28,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Continuosly spawn enemies in small time intervals.
+    /// Continuosly spawns enemies in small time intervals.
     /// </summary>
     /// <returns></returns>
     private IEnumerator SpawnEnemyWave()
@@ -38,7 +41,7 @@ public class GameManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Increase the player's score.
+    /// Increases the player's score.
     /// </summary>
     /// <param name="scoreNumber"></param>
     private void UpdateScore(int scoreNumber)
@@ -54,7 +57,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Manage spawning of the enemy waves.
+    /// Manages the spawning of the enemy waves.
     /// </summary>
     private void Update()
     {

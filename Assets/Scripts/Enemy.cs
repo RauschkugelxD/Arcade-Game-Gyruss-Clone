@@ -1,20 +1,23 @@
 using UnityEngine;
 
+/// <summary>
+/// The enemy that the player has to shoot at.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class Enemy : MonoBehaviour
 {
-    // Movement:
+    [Header("Enemy Movement")]
     [SerializeField] private float _currentRadius;
     [SerializeField, Range(2f, 3.7f)] private float _maxRadius = 3.7f; // Amplitude of sin and cos
     [SerializeField, Range(1f, 5f)] private float _movementSpeed = 2f; // Frequency of sin and cos 
     private float _posX, _posY = 0f;
-    private float _currentTime = 0f; // Accumulated elapsed time (needed for sin, cos)
+    private float _direction = 0f; 
     private Vector2 _movementDirection;
     private Vector2 _centerPoint = new Vector2(0, 0); // Center of the circle
     private Rigidbody2D _rb;
     Quaternion _lookRotation;
 
-    // Scoring:
+    [Header("Scoring")]
     [SerializeField] private PlayerScore _playerScore;
     private int _scoreNumber;
 
@@ -23,9 +26,9 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void CalculateMovement()
     {
-        _currentTime += Time.deltaTime; 
-        _posX = _centerPoint.x + Mathf.Cos(_currentTime * _movementSpeed) * _currentRadius; 
-        _posY = _centerPoint.y + Mathf.Sin(_currentTime * _movementSpeed) * _currentRadius;
+        _direction += Time.deltaTime; 
+        _posX = _centerPoint.x + Mathf.Cos(_direction * _movementSpeed) * _currentRadius; 
+        _posY = _centerPoint.y + Mathf.Sin(_direction * _movementSpeed) * _currentRadius;
         _movementDirection = new Vector2(_posX, _posY);
     }
 

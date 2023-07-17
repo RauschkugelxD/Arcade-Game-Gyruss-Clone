@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// The bullet that the player can shoot.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class Bullet : MonoBehaviour
 {
