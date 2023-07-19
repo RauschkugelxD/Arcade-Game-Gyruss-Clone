@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 4.5
-  _movementSpeed: 3.5
+  _movementSpeed: 2.28
   _bulletPrefab: {fileID: 1053419176401369508, guid: 88122d36cb11dd74eb0fcdb36aad866b, type: 3}
   _bulletSpawnPoint: {fileID: 6112610201972588540}
 --- !u!1001 &4553351299409577812
@@ -248,7 +248,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1512808885713801367, guid: 88122d36cb11dd74eb0fcdb36aad866b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.062
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 1512808885713801367, guid: 88122d36cb11dd74eb0fcdb36aad866b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -285,6 +285,10 @@ PrefabInstance:
     - target: {fileID: 1953522385929324354, guid: 88122d36cb11dd74eb0fcdb36aad866b, type: 3}
       propertyPath: m_Name
       value: Bullet
+      objectReference: {fileID: 0}
+    - target: {fileID: 1953522385929324354, guid: 88122d36cb11dd74eb0fcdb36aad866b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

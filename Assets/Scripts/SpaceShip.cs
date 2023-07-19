@@ -1,3 +1,4 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 /// <summary>
@@ -10,7 +11,7 @@ public class SpaceShip : MonoBehaviour
     [SerializeField, Range(2f, 4.5f)] private float _radius = 4f; // Amplitude of sin and cos
     [SerializeField, Range(1f, 5f)] private float _movementSpeed = 4.5f; // Frequency of sin and cos 
     private float _posX, _posY = 0f;
-    private int _movementDirection;
+    private int _movementDirection = 1;
     private float _movement = 0f;
     private Vector3 _centerPoint = new(0, 0, 0); // Center of the circle
     private Vector2 _targetPosition;
@@ -26,39 +27,58 @@ public class SpaceShip : MonoBehaviour
     /// Calculates circular movement by manipulating the x-axis movement with cosinus and the y-axis movement with sinus.
     /// The clockwise/anticlockwise direction is handled by user input.
     /// </summary>
-    private void CalculateMovement()
+    private void CalculateMovementAndRotation()
     {
-        // Check for direction changes when keys are pressed:
+        bool leftArrow = Input.GetKey(KeyCode.LeftArrow);
+        bool rightArrow = Input.GetKey(KeyCode.RightArrow);
+        bool keyA = Input.GetKey(KeyCode.A);
+        bool keyD = Input.GetKey(KeyCode.D);
+
+        // Determine direction when keys are getting pressed:
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             _movementDirection = -1;
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        } else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             _movementDirection = 1;
         }
 
-        // Increase or decrease the x-value of sin/cos based on the last directional key pressed:
-        if (_movementDirection == -1)
+        // Perform movement when movement keys are pressed:
+        if (leftArrow || rightArrow || keyA || keyD)
         {
-            _movement -= Time.deltaTime;
-        } else 
-        {
-            _movement += Time.deltaTime;
+            // Change direction when a key is lifted but another directional key is still pressed:
+            if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.A))
+            {
+                if (rightArrow || keyD)
+                {
+                    _movementDirection = 1;
+                }
+            } else if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.D))
+            {
+                if (leftArrow || keyA)
+                {
+                    _movementDirection = -1;
+                }
+            }
+
+            // Increase or decrease the x-value of sin/cos based on the current direction:
+            if (_movementDirection == -1)
+            {
+                _movement -= Time.deltaTime;
+            } else if (_movementDirection == 1)
+            {
+                _movement += Time.deltaTime;
+            }
+
+            // Calculate sind/cos values for circular movement:
+            _posX = _centerPoint.x + (Mathf.Cos(_movement * _movementSpeed) * _radius);
+            _posY = _centerPoint.y + (Mathf.Sin(_movement * _movementSpeed) * _radius);
+            _targetPosition = new Vector2(_posX, _posY);
+
+            // Calculate rotation of the spaceship towards the center of the screen:
+            _rotationDirection = (_centerPoint - transform.position).normalized;
+            _lookRotation = Quaternion.LookRotation(Vector3.forward, _rotationDirection); 
         }
-
-        _posX = _centerPoint.x + (Mathf.Cos(_movement * _movementSpeed) * _radius);
-        _posY = _centerPoint.y + (Mathf.Sin(_movement * _movementSpeed) * _radius);
-        _targetPosition = new Vector2(_posX, _posY);
-    }
-
-    /// <summary>
-    /// Calculates the rotation of the spaceship towards the center of the screen.
-    /// </summary>
-    private void CalculateRotation()
-    {
-        _rotationDirection = (_centerPoint - transform.position).normalized; 
-        _lookRotation = Quaternion.LookRotation(Vector3.forward, _rotationDirection);
     }
 
     /// <summary>
@@ -99,8 +119,7 @@ public class SpaceShip : MonoBehaviour
             return;
         }
 
-        CalculateMovement();
-        CalculateRotation();
+        CalculateMovementAndRotation();
 
         if (Input.GetKeyDown(KeyCode.Space))
         {

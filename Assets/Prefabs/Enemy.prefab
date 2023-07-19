@@ -157,7 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentRadius: 0
   _maxRadius: 3.7
-  _movementSpeed: 2.6
+  _movementSpeed: 4
   _playerScore: {fileID: 11400000, guid: ccd8a017bb3e5334e9435cd4b7f6ce7b, type: 2}
 --- !u!1001 &2169892810280739689
 PrefabInstance:
