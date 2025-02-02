@@ -34,7 +34,7 @@ Transform:
   m_Children:
   - {fileID: 2167326574706641887}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1222410019734458595
 Rigidbody2D:
@@ -155,10 +155,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e298b9855fe9af4eb43fc052b4c2a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentRadius: 0
-  _maxRadius: 3.7
-  _movementSpeed: 4
+  _maxRadius: 3.5
+  _movementSpeed: 0.9
   _playerScore: {fileID: 11400000, guid: ccd8a017bb3e5334e9435cd4b7f6ce7b, type: 2}
+  _scorePointsPro: 10
+  _scorePointsMedium: 5
+  _scorePointsEasy: 1
+  _smallScoreRadius: 1.5
+  _bigScoreRadius: 2.5
 --- !u!1001 &2169892810280739689
 PrefabInstance:
   m_ObjectHideFlags: 0

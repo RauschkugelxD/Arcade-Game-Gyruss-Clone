@@ -7,22 +7,27 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [Header("Enemy Movement")]
-    [SerializeField] private float _currentRadius;
     [SerializeField, Range(2f, 3.7f)] private float _maxRadius = 3.7f; // Amplitude of sin and cos
-    [SerializeField, Range(1f, 5f)] private float _movementSpeed = 2f; // Frequency of sin and cos 
-    private float _posX, _posY = 0f;
-    private float _direction = 0f; 
+    [SerializeField, Range(0.1f, 5f)] private float _movementSpeed = 2f; // Frequency of sin and cos 
+    private float _currentRadius = 0.05f;
+    private float _posX, _posY;
+    private float _direction; 
     private Vector2 _movementDirection;
-    private Vector2 _centerPoint = new Vector2(0, 0); // Center of the circle
+    private Vector2 _centerPoint;
     private Rigidbody2D _rb;
-    Quaternion _lookRotation;
+    private Quaternion _lookRotation;
 
     [Header("Scoring")]
     [SerializeField] private PlayerScore _playerScore;
-    private int _scoreNumber;
+    [SerializeField] private int _scorePointsPro = 10;
+    [SerializeField] private int _scorePointsMedium = 5;
+    [SerializeField] private int _scorePointsEasy = 1;
+    [SerializeField] private float _smallScoreRadius = 1.5f;
+    [SerializeField] private float _bigScoreRadius = 2.5f;
+    private int _scorePoints;
 
     /// <summary>
-    /// Calculate circular movement (only anticlockwise) by manipulating the x-axis movement with cosinus and the y-axis movement with sinus.
+    /// Calculate circular movement (only anticlockwise) by manipulating the x-axis movement with cosine and the y-axis movement with sine.
     /// </summary>
     private void CalculateMovement()
     {
@@ -48,23 +53,23 @@ public class Enemy : MonoBehaviour
     /// <param name="collider"></param>
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.GetComponent<Bullet>() is Bullet bullet)
+        if (collider.GetComponent<Bullet>() is Bullet)
         {
-            _playerScore.Score = _scoreNumber;
+            _playerScore.Score = _scorePoints;
             Destroy(gameObject);
             Destroy(collider.gameObject);
         }
     }
 
+    /// <summary>
+    /// Initializes values at the start of the game.
+    /// </summary>
     private void Start()
     {
-        _currentRadius = 0.5f;
         _movementDirection = new Vector2(_currentRadius, _currentRadius); // Starting position of sin(0)/cos(0)
         transform.position = _movementDirection; // Spawning right on the circle instead of the center to prevent motion jumps
-         _ = transform.eulerAngles.y + 180; // Rotation towards movement direction 
+        _ = transform.eulerAngles.y + 180; // Rotation towards movement direction 
         _rb = GetComponent<Rigidbody2D>();
-
-        _scoreNumber = 10;
     }
 
     /// <summary>
@@ -75,17 +80,21 @@ public class Enemy : MonoBehaviour
         CalculateMovement();
         CalculateRotation();
 
-        // Scoring:
+        // Scoring
         if (_currentRadius < _maxRadius)
         {
             _currentRadius += 0.005f;
-
-            if (_currentRadius >= 1.5f && _currentRadius <= 2.5f)
+            
+            if (_currentRadius <= _smallScoreRadius)
             {
-                _scoreNumber = 5;
-            } else if (_currentRadius >= 2.5f)
+                _scorePoints = _scorePointsPro;
+            }
+            if (_currentRadius > _smallScoreRadius && _currentRadius <= _bigScoreRadius)
             {
-                _scoreNumber = 1;
+                _scorePoints = _scorePointsMedium;
+            } else if (_currentRadius > _bigScoreRadius)
+            {
+                _scorePoints = _scorePointsEasy;
             }
         }
     }
@@ -95,7 +104,8 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void FixedUpdate()
     {
+        float angularMovement = 500f;
         _rb.MovePosition(_movementDirection);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, 20f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, angularMovement);
     }
 }

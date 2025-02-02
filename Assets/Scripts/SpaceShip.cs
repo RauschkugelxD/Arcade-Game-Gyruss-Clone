@@ -1,4 +1,3 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 /// <summary>
@@ -10,10 +9,10 @@ public class SpaceShip : MonoBehaviour
     [Header("Space Ship Movement")]
     [SerializeField, Range(2f, 4.5f)] private float _radius = 4f; // Amplitude of sin and cos
     [SerializeField, Range(1f, 5f)] private float _movementSpeed = 4.5f; // Frequency of sin and cos 
-    private float _posX, _posY = 0f;
+    private float _posX, _posY;
     private int _movementDirection = 1;
-    private float _movement = 0f;
-    private Vector3 _centerPoint = new(0, 0, 0); // Center of the circle
+    private float _movement;
+    private Vector3 _spawnPoint;
     private Vector2 _targetPosition;
     private Vector2 _rotationDirection;
     private Quaternion _lookRotation;
@@ -24,7 +23,7 @@ public class SpaceShip : MonoBehaviour
     [SerializeField] private Transform _bulletSpawnPoint;
 
     /// <summary>
-    /// Calculates circular movement by manipulating the x-axis movement with cosinus and the y-axis movement with sinus.
+    /// Calculates circular movement by manipulating the x-axis movement with cosine and the y-axis movement with sine.
     /// The clockwise/anticlockwise direction is handled by user input.
     /// </summary>
     private void CalculateMovementAndRotation()
@@ -34,7 +33,7 @@ public class SpaceShip : MonoBehaviour
         bool keyA = Input.GetKey(KeyCode.A);
         bool keyD = Input.GetKey(KeyCode.D);
 
-        // Determine direction when keys are getting pressed:
+        // Determine direction when keys are getting pressed
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             _movementDirection = -1;
@@ -43,10 +42,10 @@ public class SpaceShip : MonoBehaviour
             _movementDirection = 1;
         }
 
-        // Perform movement when movement keys are pressed:
+        // Perform movement when movement keys are pressed
         if (leftArrow || rightArrow || keyA || keyD)
         {
-            // Change direction when a key is lifted but another directional key is still pressed:
+            // Change direction when a key is lifted but another directional key is still pressed
             if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.A))
             {
                 if (rightArrow || keyD)
@@ -61,7 +60,7 @@ public class SpaceShip : MonoBehaviour
                 }
             }
 
-            // Increase or decrease the x-value of sin/cos based on the current direction:
+            // Increase or decrease the x-value of sin/cos based on the current direction
             if (_movementDirection == -1)
             {
                 _movement -= Time.deltaTime;
@@ -70,13 +69,13 @@ public class SpaceShip : MonoBehaviour
                 _movement += Time.deltaTime;
             }
 
-            // Calculate sind/cos values for circular movement:
-            _posX = _centerPoint.x + (Mathf.Cos(_movement * _movementSpeed) * _radius);
-            _posY = _centerPoint.y + (Mathf.Sin(_movement * _movementSpeed) * _radius);
+            // Calculate sind/cos values for circular movement
+            _posX = _spawnPoint.x + Mathf.Cos(_movement * _movementSpeed) * _radius;
+            _posY = _spawnPoint.y + Mathf.Sin(_movement * _movementSpeed) * _radius;
             _targetPosition = new Vector2(_posX, _posY);
 
-            // Calculate rotation of the spaceship towards the center of the screen:
-            _rotationDirection = (_centerPoint - transform.position).normalized;
+            // Calculate rotation of the spaceship towards the center of the screen
+            _rotationDirection = (_spawnPoint - transform.position).normalized;
             _lookRotation = Quaternion.LookRotation(Vector3.forward, _rotationDirection); 
         }
     }
@@ -95,17 +94,12 @@ public class SpaceShip : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        // Disable game objects in the hierarchy for safety:
-        GameObject.Find("Enemy")?.SetActive(false);
-        GameObject.Find("Bullet")?.SetActive(false);
-
-        // Set the initial position of the spaceship (important in FixedUpdate()):
+        // Set the initial position of the spaceship (important in FixedUpdate())
         _targetPosition = new Vector2(0, -_radius);
 
-        // Set the starting point on the sin/cos curve to match the initial position at the bottom of the screen --> prevent motion jumps at the beginning:
-        _movement = (1.5f / _movementSpeed) * Mathf.PI;
+        // Set the starting point on the sin/cos curve to match the initial position at the bottom of the screen to prevent motion jumps at the beginning
+        _movement = 1.5f / _movementSpeed * Mathf.PI;
 
-        _centerPoint = new Vector3(0, 0, 0);
         _rb = GetComponent<Rigidbody2D>();
     }
 
@@ -128,12 +122,13 @@ public class SpaceShip : MonoBehaviour
     }
 
     /// <summary>
-    /// Performs the actual movement and rotation of the spaceship. 
-    /// NOTE: Is called before Update(): so at the beginning, _movementDirection is not yet calcualted in Update() and therefore needs to be initialized in Start() as a specific start position is desired.
+    /// Performs the actual movement and rotation of the spaceship.
     /// </summary>
+    /// <remarks>Is called before Update(): At the beginning, _movementDirection is not yet calculated in Update() and therefore needs to be initialized in Start() as a specific start position is desired.</remarks>
     private void FixedUpdate()
     {
+        float angularSpeed = 400f;
         _rb.MovePosition(_targetPosition);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, Time.fixedDeltaTime * 700f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, Time.fixedDeltaTime * angularSpeed);
     }
 }

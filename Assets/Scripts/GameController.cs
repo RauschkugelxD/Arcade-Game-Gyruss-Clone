@@ -5,14 +5,14 @@ using UnityEngine;
 /// <summary>
 /// Manages the game. Responsible for the enemy spawning and the representation of the score in the UI.
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameController : MonoBehaviour
 {
     [Header("Enemy Spawning")]
     [SerializeField, Range(0, 10)] private int _waveCount = 10;
     [SerializeField, Range(2f, 20f)] private float _waveInterval;
     [SerializeField, Range(0, 10)] private int _enemyCount = 5;
     [SerializeField] private Enemy _enemyPrefab;
-    private float _spawnTimer;
+    private float _spawnTimer = 1f;
 
     [Header("Scoring")]
     [SerializeField] private TMP_Text _scoreText;
@@ -28,15 +28,14 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Continuosly spawns enemies in small time intervals.
+    /// Continuously spawns enemies in small time-intervals.
     /// </summary>
-    /// <returns></returns>
     private IEnumerator SpawnEnemyWave()
     {
-        for (int i = 0; i < _enemyCount; i++)  // while (true)
+        for (int i = 0; i < _enemyCount; i++)
         {
             SpawnEnemy();
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.3f);
         }
     }
     
@@ -51,7 +50,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        _spawnTimer = 2f; // Initial waiting time for the first wave
         _playerScore.ResetScore();
         _playerScore.OnUpdateScore.AddListener(UpdateScore);
     }
